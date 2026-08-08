@@ -13,6 +13,12 @@ export const toolSchema = z.object({
 });
 
 export type Tool = z.infer<typeof toolSchema>;
+
+export function getToolLogo(tool: Tool) {
+  if (tool.logo) return tool.logo;
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(tool.url).hostname)}&sz=128`;
+}
+
 export const tools = z.array(toolSchema).parse([
   { name: "ChatGPT", slug: "chatgpt", url: "https://chatgpt.com", description: "General-purpose AI assistant for writing, coding, analysis, learning and task automation.", category: "AI", tags: ["AI Assistant", "Writing", "Coding", "Agent"], featured: true, trending: true },
   { name: "Claude", slug: "claude", url: "https://claude.ai", description: "AI assistant for document analysis, software development and complex reasoning tasks.", category: "AI", tags: ["AI Assistant", "Long Context", "Coding"], featured: true, trending: true },
