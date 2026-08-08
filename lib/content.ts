@@ -18,7 +18,7 @@ const english: Copy = {
   legal: { privacy: "Privacy", terms: "Terms", contact: "Contact" },
 };
 
-const translatedLabels: Partial<Record<Locale, Pick<Copy, "hero" | "sections" | "search" | "submit" | "legal">> = {
+const translatedLabels: Partial<Record<Locale, Pick<Copy, "hero" | "sections" | "search" | "submit" | "legal">>> = {
   "zh-Hans": { hero: { ...english.hero, title: "发现真正值得使用的工具。", description: "探索全球的 AI 产品、在线工具、开发者资源与优质网站。", placeholder: "搜索 AI、工具和网站...", search: "搜索", source: "搜索方式" }, sections: { ...english.sections, trending: "正在热门", categories: "浏览分类", new: "新近收录", featured: "编辑精选", empty: "精选工具即将上线。" }, search: { ...english.search, title: "搜索 NavGrove", results: "个结果", noResults: "暂时没有匹配的工具。", back: "返回发现页" }, submit: { ...english.submit, title: "提交工具", intro: "发现了实用产品？发送给 NavGrove 编辑团队审核。", button: "打开邮件草稿", notice: "将打开预填投稿模板的邮件应用，浏览器语言可能会作为技术信息附上。" }, legal: { privacy: "隐私政策", terms: "服务条款", contact: "联系我们" } },
   ar: { hero: { ...english.hero, title: "اكتشف أدوات تستحق الاستخدام.", description: "استكشف منتجات الذكاء الاصطناعي والأدوات والموارد المفيدة من أنحاء العالم.", placeholder: "ابحث عن أدوات ومواقع...", search: "بحث", source: "البحث باستخدام" } },
 };
