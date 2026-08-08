@@ -1,0 +1,2 @@
+"use client";
+export function SubmitButton({ label }: { label: string }) { const openDraft = () => { const body = encodeURIComponent("Product name:\nWebsite URL:\nDescription:\nCategory:\nContact email:\n\nBrowser language: " + navigator.language); window.location.href = `mailto:support@navgrove.com?subject=${encodeURIComponent("Tool Submission: ")}&body=${body}`; }; return <button onClick={openDraft} className="focus-ring mt-6 rounded-md bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-700">{label}</button>; }
