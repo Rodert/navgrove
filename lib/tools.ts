@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Locale } from "./i18n";
 
 export const categories = ["AI", "Developer", "Design", "Productivity", "Online Tools", "Resources"] as const;
 export type Category = (typeof categories)[number];
@@ -13,6 +14,17 @@ export const toolSchema = z.object({
 });
 
 export type Tool = z.infer<typeof toolSchema>;
+
+const categoryLabels: Partial<Record<Locale, Record<Category, string>>> = {
+  "zh-Hans": { AI: "人工智能", Developer: "开发者工具", Design: "设计创作", Productivity: "效率工具", "Online Tools": "在线工具", Resources: "资源" },
+};
+
+const chineseDescriptions: Record<string, string> = {
+  chatgpt: "通用 AI 助手，适合写作、编程、分析、学习与任务自动化。", claude: "适用于文档分析、软件开发与复杂推理的 AI 助手。", gemini: "支持搜索、图片理解和 Google 生态协作的多模态 AI 助手。", grok: "用于聊天、新闻分析和 X 平台信息检索的实时 AI 助手。", deepseek: "面向中文问答、编程与推理任务的 AI 模型和助手。", cursor: "用于编写、理解和重构软件项目的 AI 优先代码编辑器。", "github-copilot": "面向代码补全、对话和开发流程的 AI 编程助手。", "openai-codex": "可规划、修改并执行软件项目任务的编程 Agent。", "claude-code": "用于代码库分析与自动化项目修改的命令行编程 Agent。", perplexity: "用于联网研究、带引用回答和资料整理的 AI 搜索引擎。", "gemini-search": "由 Google 驱动的 AI 搜索与知识问答助手。", "you-com": "将网页搜索结果与 AI 助手结合的搜索平台。", midjourney: "用于艺术概念、插画和商业视觉的 AI 图片生成工具。", "gpt-image": "通过 ChatGPT 进行 AI 图片生成与编辑的工具。", "stable-diffusion": "适用于本地工作流与自定义模型训练的开源图像生成模型。", "leonardo-ai": "用于游戏素材、概念设计和视觉创作的 AI 设计平台。", runway: "用于视频生成、剪辑和视觉特效的 AI 视频平台。", pika: "用于创意短视频内容生成的 AI 视频工具。", "kling-ai": "支持文生视频和图生视频的 AI 视频创作工具。", sora: "用于高质量视频创作的 AI 视频生成模型。",
+};
+
+export function getCategoryLabel(category: Category, locale: Locale) { return categoryLabels[locale]?.[category] ?? category; }
+export function getToolDescription(tool: Tool, locale: Locale) { return tool.translations?.[locale]?.description ?? (locale === "zh-Hans" ? chineseDescriptions[tool.slug] ?? tool.description : tool.description); }
 
 export function getToolLogo(tool: Tool) {
   if (tool.logo) return tool.logo;
