@@ -13,15 +13,11 @@ export function SearchBox({ locale, copy }: { locale: Locale; copy: Copy }) {
     if (source === "navgrove") router.push(`/${locale}/search/?q=${encodeURIComponent(value)}`);
     else window.open(source === "google" ? `https://www.google.com/search?q=${encodeURIComponent(value)}` : `https://www.baidu.com/s?wd=${encodeURIComponent(value)}`, "_blank", "noopener,noreferrer");
   }
-  return <form onSubmit={submit} className="surface mx-auto max-w-3xl p-2 shadow-sm">
-    <div className="flex flex-col gap-2 sm:flex-row">
+  return <form onSubmit={submit} className="mx-auto max-w-3xl">
+    <div className="surface flex gap-2 p-2 shadow-sm">
       <input value={query} onChange={(event) => setQuery(event.target.value)} aria-label={copy.hero.placeholder} placeholder={copy.hero.placeholder} className="focus-ring min-w-0 flex-1 rounded-md px-3 py-3 outline-none" />
-      <div className="flex gap-2">
-        <select value={source} onChange={(event) => setSource(event.target.value as Source)} aria-label={copy.hero.source} className="focus-ring rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700">
-          <option value="navgrove">NavGrove</option><option value="google">Google</option><option value="baidu">Baidu</option>
-        </select>
-        <button className="focus-ring rounded-md bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-700" type="submit">{copy.hero.search}</button>
-      </div>
+      <button className="focus-ring rounded-md bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-700" type="submit">{copy.hero.search}</button>
     </div>
+    <div className="mt-3 flex items-center gap-1 text-sm" role="group" aria-label={copy.hero.source}>{(["navgrove", "google", "baidu"] as Source[]).map((option) => <button key={option} type="button" onClick={() => setSource(option)} className={`focus-ring rounded-md px-3 py-1.5 ${source === option ? "bg-green-50 font-medium text-green-800" : "text-slate-500 hover:text-slate-900"}`}>{option === "navgrove" ? "NavGrove" : option === "google" ? "Google" : "Baidu"}</button>)}</div>
   </form>;
 }
