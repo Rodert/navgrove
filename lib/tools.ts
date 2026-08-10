@@ -1,12 +1,12 @@
 import { z } from "zod";
 import type { Locale } from "./i18n";
 
-export const categories = ["AI", "Developer", "Design", "Productivity", "Online Tools", "Resources"] as const;
+export const categories = ["AI", "Developer", "Design", "Productivity", "Online Tools", "Resources", "Free"] as const;
 export type Category = (typeof categories)[number];
 
 export const toolSchema = z.object({
   name: z.string().min(1), slug: z.string().regex(/^[a-z0-9-]+$/), url: z.string().url(),
-  description: z.string().min(1), category: z.enum(categories), tags: z.array(z.string()),
+  description: z.string().min(1), category: z.enum(categories), additionalCategories: z.array(z.enum(categories)).default([]), isFree: z.boolean().default(false), tags: z.array(z.string()),
   logo: z.string().url().optional(), featured: z.boolean().default(false), trending: z.boolean().default(false),
   translations: z.record(z.string(), z.object({ description: z.string() })).optional(),
   sponsorship: z.enum(["none", "owned", "sponsored", "affiliate"]).default("none"),
@@ -16,7 +16,7 @@ export const toolSchema = z.object({
 export type Tool = z.infer<typeof toolSchema>;
 
 const categoryLabels: Partial<Record<Locale, Record<Category, string>>> = {
-  "zh-Hans": { AI: "人工智能", Developer: "开发者工具", Design: "设计创作", Productivity: "效率工具", "Online Tools": "在线工具", Resources: "资源" },
+  "zh-Hans": { AI: "人工智能", Developer: "开发者工具", Design: "设计创作", Productivity: "效率工具", "Online Tools": "在线工具", Resources: "资源", Free: "免费" },
 };
 
 const chineseDescriptions: Record<string, string> = {
@@ -25,6 +25,7 @@ const chineseDescriptions: Record<string, string> = {
 
 export function getCategoryLabel(category: Category, locale: Locale) { return categoryLabels[locale]?.[category] ?? category; }
 export function getToolDescription(tool: Tool, locale: Locale) { return tool.translations?.[locale]?.description ?? (locale === "zh-Hans" ? chineseDescriptions[tool.slug] ?? tool.description : tool.description); }
+export function isInCategory(tool: Tool, category: Category) { return category === "Free" ? tool.isFree : tool.category === category || tool.additionalCategories.includes(category); }
 
 export function getToolLogo(tool: Tool) {
   if (tool.logo) return tool.logo;
@@ -37,7 +38,7 @@ export const tools = z.array(toolSchema).parse([
   { name: "Gemini", slug: "gemini", url: "https://gemini.google.com", description: "Multimodal AI assistant for search, image understanding and Google-connected work.", category: "AI", tags: ["AI Assistant", "Multimodal", "Google"], featured: true, trending: true },
   { name: "Grok", slug: "grok", url: "https://grok.com", description: "Real-time AI assistant for conversations, news analysis and information from X.", category: "AI", tags: ["AI Assistant", "Real Time", "News"], trending: true },
   { name: "DeepSeek", slug: "deepseek", url: "https://chat.deepseek.com", description: "AI model and assistant for Chinese questions, coding and reasoning.", category: "AI", tags: ["AI Assistant", "Chinese", "Coding", "Reasoning"], trending: true },
-  { name: "Cursor", slug: "cursor", url: "https://cursor.com", description: "AI-first code editor for writing, understanding and refactoring software projects.", category: "Developer", tags: ["AI Coding", "IDE", "Refactoring"], featured: true, trending: true },
+  { name: "Cursor", slug: "cursor", url: "https://cursor.com", description: "AI-first code editor for writing, understanding and refactoring software projects.", category: "Developer", additionalCategories: ["AI"], tags: ["AI Coding", "IDE", "Refactoring"], featured: true, trending: true },
   { name: "GitHub Copilot", slug: "github-copilot", url: "https://github.com/features/copilot", description: "AI coding assistant for code completion, chat and development workflows.", category: "Developer", tags: ["AI Coding", "Code Completion", "GitHub"], featured: true },
   { name: "OpenAI Codex", slug: "openai-codex", url: "https://chatgpt.com/codex", description: "Coding agent for planning, editing and running tasks across software projects.", category: "Developer", tags: ["Coding Agent", "Automation", "OpenAI"], featured: true, trending: true },
   { name: "Claude Code", slug: "claude-code", url: "https://claude.com/product/claude-code", description: "Command-line coding agent for codebase analysis and automated project changes.", category: "Developer", tags: ["Coding Agent", "CLI", "Codebase"], featured: true, trending: true },
@@ -52,8 +53,8 @@ export const tools = z.array(toolSchema).parse([
   { name: "Pika", slug: "pika", url: "https://pika.art", description: "AI video generator for creative short-form visual content.", category: "Design", tags: ["AI Video", "Video Generation", "Creative"] },
   { name: "Kling AI", slug: "kling-ai", url: "https://klingai.com", description: "AI video tool for text-to-video and image-to-video creation.", category: "Design", tags: ["AI Video", "Text to Video", "Image to Video"], featured: true, trending: true },
   { name: "Sora", slug: "sora", url: "https://sora.com", description: "AI video generation model for high-quality video creation.", category: "Design", tags: ["AI Video", "Video Generation", "OpenAI"], featured: true, trending: true },
-  { name: "JavaPub Markdown Editor", slug: "javapub-markdown", url: "https://md.javapub.net.cn/", description: "Online Markdown editor for formatting and publishing content to WeChat Official Accounts and other platforms.", category: "Productivity", tags: ["Markdown", "Writing", "Publishing", "WeChat", "Content Creation"] },
+  { name: "JavaPub Markdown Editor", slug: "javapub-markdown", url: "https://md.javapub.net.cn/", description: "Online Markdown editor for formatting and publishing content to WeChat Official Accounts and other platforms.", category: "Productivity", isFree: true, tags: ["Markdown", "Writing", "Publishing", "WeChat", "Content Creation"] },
   { name: "SilicoGrove AI", slug: "silicogrove", url: "https://chatgpt.silicogrove.com/", description: "Independent third-party ChatGPT mirror service offering free trial account access.", category: "AI", tags: ["AI Assistant", "ChatGPT", "Third-Party", "Chinese"] },
-  { name: "JavaPub Tools", slug: "javapub-tools", url: "https://rodert.github.io/jsonformat/", description: "Developer toolbox for JSON formatting, encoding, debugging, image processing and other local utilities.", category: "Developer", tags: ["JSON", "Formatting", "Encoding", "Developer Utilities", "Local Processing"] },
-  { name: "WeChat Mac Versions", slug: "wechat-mac-versions", url: "https://rodert.github.io/wechat-mac-versions/", description: "Archive of historical WeChat releases for macOS, with download links and release information.", category: "Resources", tags: ["WeChat", "macOS", "Downloads", "Version Archive"] },
+  { name: "JavaPub Tools", slug: "javapub-tools", url: "https://rodert.github.io/jsonformat/", description: "Developer toolbox for JSON formatting, encoding, debugging, image processing and other local utilities.", category: "Developer", additionalCategories: ["Online Tools"], isFree: true, tags: ["JSON", "Formatting", "Encoding", "Developer Utilities", "Local Processing"] },
+  { name: "WeChat Mac Versions", slug: "wechat-mac-versions", url: "https://rodert.github.io/wechat-mac-versions/", description: "Archive of historical WeChat releases for macOS, with download links and release information.", category: "Resources", isFree: true, tags: ["WeChat", "macOS", "Downloads", "Version Archive"] },
 ]) as Tool[];
