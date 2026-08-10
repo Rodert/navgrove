@@ -4,10 +4,9 @@ import type { Copy } from "@/lib/content";
 import { LanguageSelect } from "./LanguageSelect";
 
 export function Header({ locale, copy }: { locale: Locale; copy: Copy }) {
-  const brandName = locale === "zh-Hans" ? "AGI 导航森林" : "NavGrove";
   return <header className="border-b border-slate-200 bg-white">
     <div className="shell flex min-h-16 items-center justify-between gap-4">
-      <Link href={`/${locale}/`} className="focus-ring text-xl font-bold tracking-normal text-slate-900">{locale === "zh-Hans" ? <span className="text-green-700">{brandName}</span> : <>Nav<span className="text-green-600">Grove</span></>}</Link>
+      <Link href={`/${locale}/`} className="focus-ring flex items-baseline gap-2 text-xl font-bold tracking-normal text-slate-900">Nav<span className="text-green-600">Grove</span>{locale === "zh-Hans" && <span className="text-sm font-medium text-slate-500">AGI 导航森林</span>}</Link>
       <nav className="hidden items-center gap-5 text-sm text-slate-600 md:flex">
         <Link href={`/${locale}/`} className="focus-ring hover:text-green-700">{copy.nav.discover}</Link>
         <Link href={`/${locale}/category/AI/`} className="focus-ring hover:text-green-700">{copy.nav.ai}</Link>
