@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Locale } from "./i18n";
 
-export const categories = ["AI", "Developer", "Design", "Productivity", "Online Tools", "Resources", "Free"] as const;
+export const categories = ["AI", "Developer", "Design", "Productivity", "Online Tools", "Resources", "Free", "3D", "Skills", "AI Image", "AI Video"] as const;
 export type Category = (typeof categories)[number];
 
 export const toolSchema = z.object({
@@ -16,7 +16,7 @@ export const toolSchema = z.object({
 export type Tool = z.infer<typeof toolSchema>;
 
 const categoryLabels: Partial<Record<Locale, Record<Category, string>>> = {
-  "zh-Hans": { AI: "人工智能", Developer: "开发者工具", Design: "设计创作", Productivity: "效率工具", "Online Tools": "在线工具", Resources: "资源", Free: "免费" },
+  "zh-Hans": { AI: "人工智能", Developer: "开发者工具", Design: "设计创作", Productivity: "效率工具", "Online Tools": "在线工具", Resources: "资源", Free: "免费", "3D": "3D 设计", Skills: "Skills", "AI Image": "AI 生图", "AI Video": "AI 视频" },
 };
 
 const chineseDescriptions: Record<string, string> = {
@@ -25,7 +25,13 @@ const chineseDescriptions: Record<string, string> = {
 
 export function getCategoryLabel(category: Category, locale: Locale) { return categoryLabels[locale]?.[category] ?? category; }
 export function getToolDescription(tool: Tool, locale: Locale) { return tool.translations?.[locale]?.description ?? (locale === "zh-Hans" ? chineseDescriptions[tool.slug] ?? tool.description : tool.description); }
-export function isInCategory(tool: Tool, category: Category) { return category === "Free" ? tool.isFree : tool.category === category || tool.additionalCategories.includes(category); }
+export function isInCategory(tool: Tool, category: Category) {
+  if (category === "Free") return tool.isFree;
+  if (category === "3D") return tool.tags.some((tag) => tag === "3D" || tag === "AI 3D");
+  if (category === "Skills") return tool.tags.includes("Skills");
+  if (category === "AI Image" || category === "AI Video") return tool.tags.includes(category);
+  return tool.category === category || tool.additionalCategories.includes(category);
+}
 
 export function getToolLogo(tool: Tool) {
   if (tool.logo) return tool.logo;
